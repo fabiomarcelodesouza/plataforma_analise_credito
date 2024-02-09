@@ -171,8 +171,21 @@ def json_data_drift_regressao_linear(dados):
     print(dados[0])
     for linha in dados:
         linha_formatada = {
-            'valor_predito': float(linha[0]),  # Convertendo Decimal para float
-            'emprestimo_aprovado': linha[1]
+            'uuid_valor': linha[1],
+            'data_cotacao': linha[2].isoformat(),  # Convertendo o objeto date para string no formato ISO
+            'metodo': linha[3],
+            'nome_cliente': linha[4],
+            'loan_limit': linha[5],
+            'gender': linha[6],
+            'loan_type': linha[7],
+            'loan_purpose': linha[8],
+            'credit_worthiness': linha[9],
+            'open_credit': linha[10],
+            'income': float(linha[11]),  # Convertendo Decimal para float
+            'valor_predito': float(linha[12]),  # Convertendo Decimal para float
+            'r2': float(linha[13]),  # Convertendo Decimal para float
+            'rmse': float(linha[14]),  # Convertendo Decimal para float
+            'emprestimo_aprovado': linha[15]
         }
         dados_formatados.append(linha_formatada)
 

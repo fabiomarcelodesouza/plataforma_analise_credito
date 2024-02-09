@@ -23,3 +23,4 @@ docker network create rede-plataforma-cognitiva
 docker run -p 5000:5000 -d --name model-manager --network rede-plataforma-cognitiva --rm model-manager
 docker run -p 5001:5001 -d --name api_regressao_linear --network rede-plataforma-cognitiva --rm api_regressao_linear
 docker run -p 5002:5002 -d --name api_clusterizacao --network rede-plataforma-cognitiva --rm api_clusterizacao
+docker run -p 5003:5003 -d --name api_classificacao --network rede-plataforma-cognitiva --rm api_classificacao

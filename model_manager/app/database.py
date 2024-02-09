@@ -69,7 +69,7 @@ def busca_dados_data_drift(metodo):
         cur = conn.cursor()
 
         # Executar a consulta SQL
-        cur.execute(f"SELECT valor_predito, emprestimo_aprovado FROM public.cotacoes WHERE metodo = '{metodo}'")
+        cur.execute(f"SELECT * FROM public.cotacoes WHERE metodo = '{metodo}'")
 
         # Buscar os resultados da consulta
         dados = cur.fetchall()
