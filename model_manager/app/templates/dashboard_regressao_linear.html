@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datadrift - Regressão Linear</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static',  filename='css/style.css') }}"> 
+</head>
+<body>
+    <ul class="menu">
+        <li><a href="{{ MODEL_MANAGER_URL }}">Solicitação de Empréstimo</a></li>
+        <li><a href="#">Datadrift</a>
+            <ul class="submenu">
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_regressao_linear">Regressão Linear</a></li>
+                <li><a href="#">Clusterização</a></li>
+                <li><a href="#">Classificação</a></li>
+            </ul>
+        </li>
+    </ul>
+
+    <div class="container">
+        <h1>Datadrift - Regressão Linear</h1>
+        
+        <!-- Filtros -->
+        <form id="filter-form">
+            <label for="data_cotacao">Data de Cotação:</label>
+            <input type="date" id="data_cotacao" name="data_cotacao">
+            
+           <label for="Gender">Genêro:</label>
+            <select id="Gender" name="Gender">
+                <option value="">Selecione uma opção...</option>
+                <option value="0" {% if Gender == "0" %} selected {% endif %}>Masculino</option>
+                <option value="2" {% if Gender == "2" %} selected {% endif %}>Feminino</option>
+                <option value="1" {% if Gender == "1" %} selected {% endif %}>Outros</option>
+                <option value="2" {% if Gender == "2" %} selected {% endif %}>Prefiro não informar</option>
+            </select>
+
+            <label for="loan_limit">Limite do Empréstimo:</label>
+            <select id="loan_limit" name="loan_limit">
+                <option value="">Selecione uma opção...</option>
+                <option value="0" {% if loan_limit == "0" %} selected {% endif %}>CF</option>
+                <option value="1" {% if loan_limit == "1" %} selected {% endif %}>NCF</option>
+            </select>
+
+            <label for="loan_type">Tipo de Empréstimo:</label>
+            <select id="loan_type" name="loan_type">
+                <option value="">Selecione uma opção...</option>
+                <option value="2" {% if loan_type == "2" %} selected {% endif %}>Type 1</option>
+                <option value="0" {% if loan_type == "0" %} selected {% endif %}>Type 2</option>
+                <option value="1" {% if loan_type == "1" %} selected {% endif %}>Type 3</option>
+            </select>
+
+            <label for="loan_purpose">Finalidade do Empréstimo:</label>
+            <select id="loan_purpose" name="loan_purpose">
+                <option value="">Selecione uma opção...</option>
+                <option value="0" {% if loan_purpose == "0" %} selected {% endif %}>p1</option>
+                <option value="2" {% if loan_purpose == "3" %} selected {% endif %}>p2</option>
+                <option value="2" {% if loan_purpose == "2" %} selected {% endif %}>p3</option>
+                <option value="1" {% if loan_purpose == "1" %} selected {% endif %}>p4</option>
+            </select>
+
+            <label for="Credit_Worthiness">Solvabilidade:</label>
+            <select id="Credit_Worthiness" name="Credit_Worthiness">
+                <option value="">Selecione uma opção...</option>
+                <option value="0" {% if Credit_Worthiness == "0" %} selected {% endif %}>l1</option>
+                <option value="1" {% if Credit_Worthiness == "1" %} selected {% endif %}>l2</option>
+            </select>
+
+            <label for="open_credit">Crédito em Aberto:</label>
+            <select id="open_credit" name="open_credit">
+                <option value="">Selecione uma opção...</option>
+                <option value="1" {% if open_credit == "1" %} selected {% endif %}>Sim</option>
+                <option value="0" {% if open_credit == "0" %} selected {% endif %}>Não</option>
+            </select>
+            
+            <input type="submit" value="Filtrar">
+        </form>
+        
+        <div id="chart-container">
+            <canvas id="bar-chart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Dados fictícios para exemplo
+        var dados = JSON.parse('{{ json_formatado|safe }}');
+
+        // Função para filtrar os dados com base nos filtros do formulário
+        function filtrarDados() {
+            var formData = new FormData(document.getElementById('filter-form'));
+            var filteredData = dados.filter(function(item) {
+                for (var [key, value] of formData.entries()) {
+                    if (value !== '' && String(item[key]) !== String(value)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            return filteredData;
+        }
+
+        // Função para calcular a categoria baseada no valor predito
+        function calcularCategoria(valor_predito) {
+            if (valor_predito === 1) return '100%';
+            var categoria = Math.floor(valor_predito * 100 / 5) * 5;
+            return categoria + '% - ' + (categoria + 5) + '%';
+        }
+
+        // Função para ordenar as categorias de valor predito em ordem crescente
+        function ordenarCategorias(categorias) {
+            return categorias.sort((a, b) => parseFloat(a) - parseFloat(b));
+        }
+
+        // Função para atualizar o gráfico com os dados filtrados
+        function atualizarGrafico() {
+            var filteredData = filtrarDados();
+
+            // Contagem de empréstimos aprovados e reprovados para cada categoria
+            var countAprovados = {};
+            var countReprovados = {};
+
+            filteredData.forEach(function(item) {
+                var categoria = calcularCategoria(item.valor_predito);
+                if (item.emprestimo_aprovado === 1) {
+                    countAprovados[categoria] = (countAprovados[categoria] || 0) + 1;
+                } else {
+                    countReprovados[categoria] = (countReprovados[categoria] || 0) + 1;
+                }
+            });
+
+            // Ordenar as categorias de valor predito em ordem crescente
+            var categoriasOrdenadas = ordenarCategorias(Object.keys(countAprovados));
+
+            // Preparar os dados para o gráfico
+            var dadosAprovados = categoriasOrdenadas.map(function(categoria) {
+                return countAprovados[categoria] || 0;
+            });
+            var dadosReprovados = categoriasOrdenadas.map(function(categoria) {
+                return countReprovados[categoria] || 0;
+            });
+
+            // Atualizar o gráfico
+            var ctx = document.getElementById('bar-chart').getContext('2d');
+            if (window.barChart) {
+                window.barChart.destroy(); // Destruir o gráfico anterior antes de criar um novo
+            }
+            window.barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categoriasOrdenadas,
+                    datasets: [{
+                        label: 'Empréstimos Aprovados',
+                        data: dadosAprovados,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Empréstimos Reprovados',
+                        data: dadosReprovados,
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Quantidade de Empréstimos'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Categoria de Valor Predito'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Evento de submit do formulário de filtro
+        document.getElementById('filter-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar que o formulário seja submetido
+            atualizarGrafico();
+        });
+
+        // Inicializar o gráfico com os dados completos ao carregar a página
+        atualizarGrafico();
+    </script>
+</body>
+</html>
