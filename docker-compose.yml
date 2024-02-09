@@ -30,6 +30,16 @@ services:
     ports:
       - "5002:5002"
 
+  api_classificacao:
+    build:
+      context: ./classificacao/app
+      dockerfile: dockerfile
+    volumes:
+      - ./classificacao/app:/app
+    image: api_classificacao
+    ports:
+      - "5003:5003"
+
   # db-analise-credito:
   #   build:
   #     context: ./database
