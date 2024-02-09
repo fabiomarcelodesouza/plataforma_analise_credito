@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datadrift - Regressão Linear</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static',  filename='css/style.css') }}"> 
+</head>
+<body>
+    <ul class="menu">
+        <li><a href="{{ MODEL_MANAGER_URL }}">Solicitação de Empréstimo</a></li>
+        <li><a href="#">Data Predict</a>
+            <ul class="submenu">
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_regressao_linear">Regressão Linear</a></li>
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_clusterizacao">Clusterização</a></li>
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_classificacao">Classificação</a></li>
+            </ul>
+        </li>
+    </ul>
+
+    <div class="container">
+        <h1>Data Predict - Classificação</h1>
+        
+        <!-- Filtros -->
+        <form id="filter-form">
+        </form>
+        
+        <div id="chart-container">
+            <canvas id="bar-chart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Dados fictícios para exemplo
+        var dados = JSON.parse('{{ json_formatado|safe }}');
+
+        // Função para filtrar os dados com base nos filtros do formulário
+        function filtrarDados() {
+            var formData = new FormData(document.getElementById('filter-form'));
+            var filteredData = dados.filter(function(item) {
+                for (var [key, value] of formData.entries()) {
+                    if (value !== '' && String(item[key]) !== String(value)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            return filteredData;
+        }
+
+        // Função para atualizar o gráfico com os dados filtrados
+        function atualizarGrafico() {
+            var filteredData = filtrarDados();
+
+            // Contagem de empréstimos aprovados e reprovados para cada categoria
+            var countAprovados = {'EQUI': 0, 'CRIF': 0, 'CIB': 0, 'EXP': 0};
+            var countReprovados = {'EQUI': 0, 'CRIF': 0, 'CIB': 0, 'EXP': 0};
+
+            filteredData.forEach(function(item) {
+                var categoria = '';
+                switch (item.valor_predito) {
+                    case 1:
+                        categoria = 'EQUI';
+                        break;
+                    case 2:
+                        categoria = 'CRIF';
+                        break;
+                    case 3:
+                        categoria = 'CIB';
+                        break;
+                    case 4:
+                        categoria = 'EXP';
+                        break;
+                }
+                if (categoria !== '') { // Ignorar categoria "Outra"
+                    if (item.emprestimo_aprovado === 1) {
+                        countAprovados[categoria]++;
+                    } else {
+                        countReprovados[categoria]++;
+                    }
+                }
+            });
+
+            // Preparar os dados para o gráfico
+            var categorias = Object.keys(countAprovados); // Categorias únicas
+            var dadosAprovados = categorias.map(function(categoria) {
+                return countAprovados[categoria] || 0;
+            });
+            var dadosReprovados = categorias.map(function(categoria) {
+                return countReprovados[categoria] || 0;
+            });
+
+            // Atualizar o gráfico
+            var ctx = document.getElementById('bar-chart').getContext('2d');
+            if (window.barChart) {
+                window.barChart.destroy(); // Destruir o gráfico anterior antes de criar um novo
+            }
+            window.barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categorias,
+                    datasets: [{
+                        label: 'Empréstimos Aprovados',
+                        data: dadosAprovados,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Empréstimos Reprovados',
+                        data: dadosReprovados,
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Quantidade de Empréstimos'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Categoria'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Evento de submit do formulário de filtro
+        document.getElementById('filter-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar que o formulário seja submetido
+            atualizarGrafico();
+        });
+
+        // Inicializar o gráfico com os dados completos ao carregar a página
+        atualizarGrafico();
+    </script>
+</body>
+</html>
