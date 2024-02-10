@@ -82,6 +82,34 @@
         <div id="chart-container">
             <canvas id="bar-chart"></canvas>
         </div>
+
+        <!-- Tabela de detalhes -->
+        <h1>Detalhes dos Registros</h1>
+        <div class="detalhes-table-container"> <!-- Contêiner para a tabela de detalhes -->
+            <table id="detalhes-table" class="detalhes-table">
+                <thead>
+                    <tr>
+                        <th>Data de Cotação</th>
+                        <th>Método</th>
+                        <th>Nome do Cliente</th>
+                        <th>Limite do Empréstimo</th>
+                        <th>Gênero</th>
+                        <th>Tipo de Empréstimo</th>
+                        <th>Finalidade do Empréstimo</th>
+                        <th>Solvabilidade</th>
+                        <th>Crédito em Aberto</th>
+                        <th>Renda</th>
+                        <th>Valor Predito</th>
+                        <th>R2</th>
+                        <th>RMSE</th>
+                        <th>Empréstimo Aprovado</th>
+                    </tr>
+                </thead>
+                <tbody id="detalhes-body" class="detalhes-body">
+                    <!-- Aqui os detalhes serão inseridos dinamicamente -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -177,14 +205,45 @@
             });
         }
 
+        // Função para adicionar os detalhes na tabela
+        function adicionarDetalhes(dados) {
+            var detalhesBody = document.getElementById('detalhes-body');
+
+            // Limpar o corpo da tabela
+            detalhesBody.innerHTML = '';
+
+            // Iterar sobre os dados e adicionar cada registro na tabela
+            dados.forEach(function(registro) {
+                var row = '<tr>';
+                row += '<td>' + registro.data_cotacao + '</td>';
+                row += '<td>' + registro.metodo + '</td>';
+                row += '<td>' + registro.nome_cliente + '</td>';
+                row += '<td>' + (registro.loan_limit === 0 ? 'CF' : 'NCF') + '</td>';
+                row += '<td>' + (registro.gender === 0 ? 'Masculino' : (registro.gender === 2 ? 'Feminino' : (registro.gender === 1 ? 'Outros' : 'Prefiro não informar'))) + '</td>';
+                row += '<td>' + (registro.loan_type === 2 ? 'Type 1' : (registro.loan_type === 0 ? 'Type 2' : 'Type 3')) + '</td>';
+                row += '<td>' + ('p' + registro.loan_purpose) + '</td>';
+                row += '<td>' + ('l' + registro.credit_worthiness) + '</td>';
+                row += '<td>' + (registro.open_credit === 1 ? 'Sim' : 'Não') + '</td>';
+                row += '<td>' + registro.income + '</td>';
+                row += '<td>' + registro.valor_predito + '</td>';
+                row += '<td>' + registro.r2 + '</td>';
+                row += '<td>' + registro.rmse + '</td>';
+                row += '<td>' + (registro.emprestimo_aprovado === 1 ? 'Aprovado' : 'Reprovado') + '</td>';
+                row += '</tr>';
+                detalhesBody.innerHTML += row;
+            });
+        }
+
         // Evento de submit do formulário de filtro
         document.getElementById('filter-form').addEventListener('submit', function(event) {
             event.preventDefault();
             atualizarGrafico();
+            adicionarDetalhes(filtrarDados());
         });
 
         // Inicializar o gráfico com os dados completos ao carregar a página
         atualizarGrafico();
+        adicionarDetalhes(dados);
     </script>
 </body>
 </html>

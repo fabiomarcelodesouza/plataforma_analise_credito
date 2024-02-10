@@ -35,7 +35,7 @@
                 <option value="0" {% if Gender == "0" %} selected {% endif %}>Masculino</option>
                 <option value="2" {% if Gender == "2" %} selected {% endif %}>Feminino</option>
                 <option value="1" {% if Gender == "1" %} selected {% endif %}>Outros</option>
-                <option value="2" {% if Gender == "2" %} selected {% endif %}>Prefiro não informar</option>
+                <option value="3" {% if Gender == "2" %} selected {% endif %}>Prefiro não informar</option>
             </select>
 
             <label for="loan_limit">Limite do Empréstimo:</label>
@@ -58,7 +58,7 @@
                 <option value="">Selecione uma opção...</option>
                 <option value="0" {% if loan_purpose == "0" %} selected {% endif %}>p1</option>
                 <option value="2" {% if loan_purpose == "3" %} selected {% endif %}>p2</option>
-                <option value="2" {% if loan_purpose == "2" %} selected {% endif %}>p3</option>
+                <option value="3" {% if loan_purpose == "2" %} selected {% endif %}>p3</option>
                 <option value="1" {% if loan_purpose == "1" %} selected {% endif %}>p4</option>
             </select>
 

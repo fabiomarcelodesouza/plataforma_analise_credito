@@ -129,50 +129,6 @@ input[type="number"] {
     border-radius: 5px;
 }
 
-/* Estilo para campo com valor menor que 20 */
-.verde {
-    background-color: lightgreen;
-}
-
-/* Estilo para campo com valor maior ou igual a 20 */
-.vermelho {
-    background-color: lightcoral;
-}
-
-.buttons-container {
-    display: flex;
-    justify-content: space-between; /* Distribui os botões igualmente no espaço disponível */
-    text-align: center;
-}
-
-.send-button {
-    width: auto; /* Define a largura do botão conforme necessário */
-}
-
-input[type="submit"] {
-    width: 40%; /* Ajuste conforme necessário */
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.green-button {
-    background-color: lightgreen;
-    color: #fff;
-}
-
-.red-button {
-    background-color: lightcoral;
-    color: #fff;
-}
-
-input[type="submit"]:hover {
-    opacity: 0.8;
-}
-/* Fim do CSS fornecido */
-
 /* Estilo específico para os dashboards */
 #bar-chart {
     margin-top: 20px;
@@ -201,4 +157,28 @@ input[type="submit"]:hover {
     margin-left: calc({{ cluster * 25 }}% - 5px); /* Posiciona o cluster no meio da barra */
     width: 10px; /* Largura do cluster */
     text-align: center;
-}  
+}
+
+/* Estilo específico para a tabela de detalhes */
+.detalhes-table {
+    width: 100%;
+    font-size: 0.8em; /* Reduz o tamanho da fonte */
+    border-collapse: collapse; /* Remove a separação entre as células */
+}
+
+.detalhes-table th, .detalhes-table td {
+    padding: 8px; /* Espaçamento interno das células */
+    border: 1px solid #ddd; /* Adiciona uma borda para cada célula */
+    text-align: left; /* Alinha o texto à esquerda */
+}
+
+.detalhes-body {
+    height: 200px; /* Altura máxima da tabela antes de aparecer a barra de rolagem */
+    overflow-y: auto; /* Adiciona uma barra de rolagem vertical */
+}
+
+/* Estilo específico para a tabela de detalhes */
+.detalhes-table-container {
+    max-height: 300px; /* Altura máxima da tabela */
+    overflow-y: auto; /* Adiciona uma barra de rolagem vertical */
+}
