@@ -120,11 +120,11 @@
         // Função para filtrar os dados com base nos valores dos campos de filtro
         function filtrarDados() {
             var income = parseFloat(document.getElementById('income').value);
-            var gender = document.getElementById('Gender').value;
+            var gender = document.getElementById('gender').value;
             var loan_limit = parseInt(document.getElementById('loan_limit').value);
             var loan_type = parseInt(document.getElementById('loan_type').value);
             var loan_purpose = parseInt(document.getElementById('loan_purpose').value);
-            var credit_worthiness = parseInt(document.getElementById('Credit_Worthiness').value);
+            var credit_worthiness = parseInt(document.getElementById('credit_worthiness').value);
             var open_credit = parseInt(document.getElementById('open_credit').value);
 
             var dadosFiltrados = dados.filter(function(item) {
