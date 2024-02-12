@@ -1,3 +1,14 @@
+# Sumário
+
+1. [Introdução](#Plataforma-de-Análise-de-Crédito)
+2. [Características](#características)
+3. [Configuração](#configuração)
+4. [Instalação](#instalação)
+    - [Instalação usando contêineres](#instalação-usando-contêineres)
+    - [Instalação sem contêineres (EC2)](#instalação-sem-contêineres-ec2)
+5. [Contribuição](#contribuição)
+6. [Licença](#licença)
+
 # Plataforma de Análise de Crédito
 
 Esta aplicação Flask é uma plataforma de gerenciamento de modelos que realiza análises de crédito. Utiliza modelos de regressão linear, clusterização e classificação para predizer valores baseados em dados submetidos por um formulário.
@@ -29,53 +40,54 @@ Para instalar a aplicação em contêineres usando Podman, execute o comando `po
 
 Para instalar a aplicação diretamente em uma instância EC2, siga os passos abaixo:
 
+## Instalação do Model Manager:
 1. Clone o repositório:
 ```bash
 git clone https://github.com/fabiomarcelodesouza/plataforma_analise_credito
 ```
 
-2. Instalação do Model Manager:
-## Acesse o diretório do Model Manager
+2. Acesse o diretório do Model Manager
 ```bash
 cd plataforma_analise_credito/model_manager/app
 ```
-## Crie o ambiente virtual
+
+3. Crie o ambiente virtual
 ```bash
 python3 -m venv venv
 ```
 
-## Ative o ambiente virtual
+4. Ative o ambiente virtual
 ```bash
 source venv/bin/activate
 ```
 
-## Instale as dependências
+5. Instale as dependências
 ```bash
 pip install --no-cache-dir -r requirements.txt
 ```
 
-## Instale o Gunicorn
+6. Instale o Gunicorn
 ```bash
 pip install gunicorn
 ```
 
-## Teste o Gunicorn
+7. Teste o Gunicorn
 ```bash
 gunicorn -b 0.0.0.0:5000 app:app
 ```
 
-3. Adicione o grupo www-data e o usuário ec2-user ao grupo www-data:
+8. Adicione o grupo www-data e o usuário ec2-user ao grupo www-data:
 ```bash
 sudo groupadd www-data
 sudo usermod -aG www-data ec2-user
 ```
 
-4. Crie um arquivo de serviço systemd para o Model Manager:
+9. Crie um arquivo de serviço systemd para o Model Manager:
 ```bash
 sudo nano /etc/systemd/system/pg-model-manager.service
 ```
 
-5. Cole o seguinte conteúdo no arquivo:
+10. Cole o seguinte conteúdo no arquivo (este arquivo de serviço configura e gerencia um serviço que executa uma aplicação Flask (ou similar) chamada "Plataforma Cognitiva - Model Manager" usando Gunicorn como servidor de aplicativos. Ele garante que o serviço seja iniciado automaticamente durante a inicialização do sistema e reiniciado se falhar):
 ```bash
 [Unit]
 Description=Plataforma Cognitiva - Model Manager
@@ -92,7 +104,7 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-6. Ative o serviço e inicie o Model Manager:
+11. Ative o serviço e inicie o Model Manager:
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable pg-model-manager
@@ -100,17 +112,24 @@ sudo systemctl start pg-model-manager
 sudo systemctl status pg-model-manager
 ```
 
-7. Instale o Nginx:
+12. Caso precise atualizar algum arquivo, para que as alterações tenham efeito é necessário reinicializar o serviço e, opcionalmente, pode-se acompanhar os logs pelos comandos abaixo:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart pg-model-manager
+sudo journalctl -u pg-model-manager -f
+```
+
+13. Instale o Nginx:
 ```bash
 sudo yum install nginx
 ```
 
-8. Crie um arquivo de configuração do Nginx para o Model Manager:
+14. Crie um arquivo de configuração do Nginx para o Model Manager:
 ```bash
 sudo nano /etc/nginx/conf.d/model_manager.conf
 ```
 
-Cole o seguinte conteúdo no arquivo:
+15. Cole o seguinte conteúdo no arquivo (este bloco de configuração do servidor Nginx define um servidor que escuta na porta 5100 e encaminha todas as solicitações para um servidor Flask (ou similar) em execução em localhost:5000, preservando os cabeçalhos relevantes. Isso é útil para usar o Nginx como um proxy reverso para servir solicitações HTTP para um aplicativo web):
 ```bash
 server {
     listen 5100;
@@ -130,7 +149,7 @@ server {
 }
 ```
 
-9. Reinicie o Nginx para aplicar as alterações:
+16. Reinicie o Nginx para aplicar as alterações:
 ```bash
 sudo systemctl restart nginx
 ```
