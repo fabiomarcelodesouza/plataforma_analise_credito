@@ -1,6 +1,6 @@
 # Sumário
 
-1. [Introdução](#plataforma-de-análise-de-crédito)
+1. [Introdução](#introducao)
 2. [Características](#características)
 3. [Configuração](#configuração)
 4. [Instalação](#instalação)
@@ -9,7 +9,7 @@
 5. [Contribuição](#contribuição)
 6. [Licença](#licença)
 
-# Plataforma de Análise de Crédito {#plataforma-de-análise-de-crédito}
+# <a name=“introducao”><a/>Plataforma de Análise de Crédito
 
 Esta aplicação Flask é uma plataforma de gerenciamento de modelos que realiza análises de crédito. Utiliza modelos de regressão linear, clusterização e classificação para predizer valores baseados em dados submetidos por um formulário.
 
