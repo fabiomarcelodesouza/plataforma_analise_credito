@@ -100,7 +100,7 @@ sudo systemctl start pg-model-manager
 sudo systemctl status pg-model-manager
 ```
 
-6.1. Caso precise atualizar algum arquivo, para que as alterações tenham efeito é necessário reinicializar o serviço e, opcionalmente, pode-se acompanhar os logs pelos comandos abaixo:
+6.1 Caso precise atualizar algum arquivo, para que as alterações tenham efeito é necessário reinicializar o serviço e, opcionalmente, pode-se acompanhar os logs pelos comandos abaixo:
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl restart pg-model-manager
