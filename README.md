@@ -35,31 +35,31 @@ git clone https://github.com/fabiomarcelodesouza/plataforma_analise_credito
 ```
 
 2. Instalação do Model Manager:
-# Acesse o diretório do Model Manager
+## Acesse o diretório do Model Manager
 ```bash
 cd plataforma_analise_credito/model_manager/app
 ```
-# Crie o ambiente virtual
+## Crie o ambiente virtual
 ```bash
 python3 -m venv venv
 ```
 
-# Ative o ambiente virtual
+## Ative o ambiente virtual
 ```bash
 source venv/bin/activate
 ```
 
-# Instale as dependências
+## Instale as dependências
 ```bash
 pip install --no-cache-dir -r requirements.txt
 ```
 
-# Instale o Gunicorn
+## Instale o Gunicorn
 ```bash
 pip install gunicorn
 ```
 
-# Teste o Gunicorn
+## Teste o Gunicorn
 ```bash
 gunicorn -b 0.0.0.0:5000 app:app
 ```
